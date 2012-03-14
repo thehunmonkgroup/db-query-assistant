@@ -5,7 +5,7 @@
 Provides the following features on top of [node-db](http://nodejsdb.org) drivers:
 
  * Configurable connection pooling.
- * Issue multiple simultaneous queries, and get all results back in one callback when the last query completes.
+ * Issue multiple simultaneous queries, and get all results back in a callback when the last query completes.
  * Issue queries in series, getting the results for each previous query back before executing the next one.
 
 At this point it only supports the db-mysql driver, as I haven't abstracted the code to make the other drivers pluggable. Would be a simple thing to do though, feel free to submit a pull request!
@@ -17,7 +17,7 @@ It's also possible that this could be abstracted further to provide functionalit
 ### Dependencies
  * [underscore](http://documentcloud.github.com/underscore)
  * [async](https://github.com/caolan/async)
- * [node-pool](https://github.com/coopernurse/node-pool)
+ * [generic-pool](https://github.com/coopernurse/node-pool)
  * [db-mysql](https://github.com/mariano/node-db-mysql)
 
 No npm package yet, when the API is fully hardened it will be packaged. For now, clone it!
