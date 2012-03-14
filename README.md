@@ -3,6 +3,7 @@
 ## Summary
 
 Provides the following features on top of [node-db](http://nodejsdb.org) drivers:
+
  * Configurable connection pooling.
  * Issue multiple simultaneous queries, and get all results back in one callback when the last query completes.
  * Issue queries in series, getting the results for each previous query back before executing the next one.
