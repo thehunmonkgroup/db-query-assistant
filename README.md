@@ -44,7 +44,7 @@ No npm package yet, when the API is fully hardened it will be packaged. For now,
     max: 10,
   };
 
-  // First argument is the driver to use, see lib/drivers/.
+  // First argument is the driver to use, see lib/driver/.
   var db = assistant.create('db-mysql', db_config, pool_config);
 
   /**
