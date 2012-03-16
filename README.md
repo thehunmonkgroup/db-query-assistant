@@ -2,7 +2,7 @@
 
 ## Summary
 
-Provides the following features on top of supported database connection modules:
+Provides the following features on top of supported [node.js](http://nodejs.org) database connection modules:
 
  * Configurable connection pooling.
  * Issue multiple simultaneous queries, and get all results back in a callback when the last query completes.
