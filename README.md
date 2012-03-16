@@ -1,16 +1,19 @@
-# node-db-query-assistant
+# db-query-assistant
 
 ## Summary
 
-Provides the following features on top of [node-db](http://nodejsdb.org) drivers:
+Provides the following features on top of supported database connection modules:
 
  * Configurable connection pooling.
  * Issue multiple simultaneous queries, and get all results back in a callback when the last query completes.
  * Issue queries in series, getting the results for each previous query back before executing the next one.
 
-At this point it only supports the db-mysql driver, as I haven't abstracted the code to make the other drivers pluggable. Would be a simple thing to do though, feel free to submit a pull request!
+Drivers exist for the following modules:
 
-It's also possible that this could be abstracted further to provide functionality across different node-based database drivers.
+ * [db-mysql](https://github.com/mariano/node-db-mysql)
+ * [db-drizzle](https://github.com/mariano/node-db-drizzle)
+
+Writing new drivers is fairly straightforward, have a look at one of the existing drivers, and feel free to submit a pull request to add one!
 
 ## Installation
 
@@ -18,16 +21,18 @@ It's also possible that this could be abstracted further to provide functionalit
  * [underscore](http://documentcloud.github.com/underscore)
  * [async](https://github.com/caolan/async)
  * [generic-pool](https://github.com/coopernurse/node-pool)
- * [db-mysql](https://github.com/mariano/node-db-mysql)
+ * One or more of the supported database connection modules listed above.
 
 No npm package yet, when the API is fully hardened it will be packaged. For now, clone it!
 
 ## Usage
 ```javascript
-  var assistant = require('node-db-query-assistant');
+  var assistant = require('db-query-assistant');
   assistant.debug(true);
 
-  // Any values for creating a new node-db Database object can be passed.
+  // Parameters for connecting to the database. These are driver specific, see
+  // the driver documentation. This example is for the db-mysql/db-drizzle
+  // driver.
   var db_config = {
     host: 'localhost',
     user: 'root',
@@ -39,18 +44,22 @@ No npm package yet, when the API is fully hardened it will be packaged. For now,
     max: 10,
   };
 
-  var db = assistant.create(db_config, pool_config);
+  // First argument is the driver to use, see lib/drivers/.
+  var db = assistant.create('db-mysql', db_config, pool_config);
 
   /**
    * Single query example.
    *
    * Query functions are passed the following arguments:
    *   query:
-   *     A node-db query object that can be used to construct the query to
-   *     execute. When using the query object, do not return a value from the
-   *     query function!
+   *     A query object that can be used to construct the query to execute.
+   *     When using the query object, do not return a value from the query
+   *     function!
    *   db:
    *     The node-db database object.
+   *
+   * Note that not all drivers may support query objects. If a driver does not
+   * support it, then no query object argument is passed to the query function.
    */
   var query = function(query, db) {
     query.select('*').from('test_table').limit(1);
@@ -74,6 +83,9 @@ No npm package yet, when the API is fully hardened it will be packaged. For now,
    *
    * To skip executing a query, return false from the query function, the data
    * result for the skipped query in the callback will also be set to false.
+   *
+   * Note that the exact format to return is driver-specific. This example
+   * shows the db-mysql/db-drizzle format.
    */
   var query_string = function() {
     return "SELECT * FROM test_table WHERE id = 1 LIMIT 1";

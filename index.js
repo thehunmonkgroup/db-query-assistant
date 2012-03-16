@@ -1,3 +1,3 @@
 // This file is just added for convenience so this repository can be
 // directly checked out into a project's deps folder.
-module.exports = require('./lib/node-db-query-assistant');
+module.exports = require('./lib/db-query-assistant');
