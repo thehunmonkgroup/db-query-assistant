@@ -1,5 +1,5 @@
 {
-  "name": "node-db-query-assistant",
+  "name": "db-query-assistant",
   "description": "High level query functions for node-db drivers",
   "main": "./index",
   "author": "Chad Phillips",
