@@ -102,11 +102,37 @@ module.exports = function(driver, debug_log, debug) {
       query.execute(execute_callback);
     }
   }
+
+  /**
+   * The node-db drivers use the default transactional query functions, the
+   * commented out code here represents the functions that need to be
+   * implemented to customize these values.
+   *
+   * A driver can also return false for all these functions to disable
+   * using transactions.
+   *
+   * var transaction_begin = function() {
+   *   return "BEGIN";
+   * }
+   *
+   * var transaction_commit = function() {
+   *   return "COMMIT";
+   * }
+   *
+   * var transaction_rollback = function() {
+   *   return "ROLLBACK";
+   * }
+   */
+
   return {
     connect: connect,
     disconnect: disconnect,
     query_object: query_object,
     execute_query: execute_query,
+    // To customize the transactional commands, these keys would be included.
+    // transaction_begin: transaction_begin,
+    // transaction_commit: transaction_commit,
+    // transaction_rollback: transaction_rollback,
   }
 }
 
