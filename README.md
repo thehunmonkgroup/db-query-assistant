@@ -81,6 +81,8 @@ No npm package yet, when the API is fully hardened it will be packaged. For now,
    * Query results will be returned to the callback function in the order the
    * queries are passed to the assistant, one data argument per query.
    *
+   * For efficiency, each query is run on its own database connection.
+   *
    * To skip executing a query, return false from the query function, the data
    * result for the skipped query in the callback will also be set to false.
    *
@@ -113,6 +115,9 @@ No npm package yet, when the API is fully hardened it will be packaged. For now,
    *
    * The result data from the previous query function (if there was one) will be
    * the first argument to the next query function.
+   *
+   * Since queries are being run in sequence, the same database connection is
+   * reused for efficiency.
    */
   var query_count = function() {
     return "SELECT COUNT(id) AS count FROM test_table";
@@ -125,4 +130,22 @@ No npm package yet, when the API is fully hardened it will be packaged. For now,
     console.log(data);
   }
   db.querySeries(query_count, query_after_count, callback3);
+
+  /**
+   * Query transaction example.
+   *
+   * Works the same as querySeries, but wraps the query set in a transaction.
+   * Any query errors trigger an automatic rollback of the transaction.
+   */
+  var query_insert = function() {
+    return ["INSERT INTO test_table (name) VALUES (?)", 'foo'];
+  }
+  var query_insert_detail = function(insert_data) {
+    console.log(insert_data);
+    return ["INSERT INTO test_table_detail (id, value) VALUES (?, ?)", insert_data.rows.id, 'bar'];
+  }
+  var callback4 = function(err, data) {
+    console.log(data);
+  }
+  db.queryTransaction(query_insert, query_insert_detail, callback4);
 ```
