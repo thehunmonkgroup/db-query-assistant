@@ -7,6 +7,7 @@ Provides the following features on top of supported [node.js](http://nodejs.org)
  * Configurable connection pooling.
  * Issue multiple simultaneous queries, and get all results back in a callback when the last query completes.
  * Issue queries in series, getting the results for each previous query back before executing the next one.
+ * Transaction support with auto-rollback on query error.
 
 Drivers exist for the following modules:
 
