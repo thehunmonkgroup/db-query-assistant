@@ -150,3 +150,6 @@ No npm package yet, when the API is fully hardened it will be packaged. For now,
   }
   db.queryTransaction(query_insert, query_insert_detail, callback4);
 ```
+
+## Support
+The issue tracker for this project is provided to file bug reports, feature requests, and project tasks -- support requests are not accepted via the issue tracker. For all support-related issues, including configuration, usage, and training, consider hiring a competent consultant.
