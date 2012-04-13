@@ -6,6 +6,16 @@ var _ = require('underscore');
  * This also serves as an example of how to build a new driver.
  */
 module.exports = function(driver, debug_log, debug) {
+
+  /**
+   * Default settings if none are supplied by the user.
+   */
+  var defaults = {
+    hostname: 'localhost',
+    database: 'test',
+    user: 'root',
+  };
+
   /**
    * Make a new connection to the database.
    *
@@ -125,6 +135,7 @@ module.exports = function(driver, debug_log, debug) {
    */
 
   return {
+    defaults: defaults,
     connect: connect,
     disconnect: disconnect,
     query_object: query_object,
