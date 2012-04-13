@@ -2,14 +2,9 @@ var _ = require('underscore');
 
 /**
  * Base methods for all node-db based drivers.
- *
- * This also serves as an example of how to build a new driver.
  */
 module.exports = function(driver, debug_log, debug) {
 
-  /**
-   * Default settings if none are supplied by the user.
-   */
   var defaults = {
     hostname: 'localhost',
     database: 'test',
@@ -17,17 +12,9 @@ module.exports = function(driver, debug_log, debug) {
   };
 
   /**
-   * Make a new connection to the database.
-   *
    * @param db_settings
    *   A hash of settings to pass to node-db. Any parameters accepted by the
    *   Database class are allowed.
-   * @param query_callback
-   *   The function to call once the connection is established. The following
-   *   arguments should be passed to the function:
-   *     err: Any error message.
-   *     db: The database connection object that other methods can use to
-   *         execute queries, etc.
    */
   var connect = function(db_settings, query_callback) {
     var db = new driver.Database(db_settings);
@@ -37,51 +24,18 @@ module.exports = function(driver, debug_log, debug) {
     db.connect(post_connect);
   }
 
-  /**
-   * Disconnect a database connection.
-   *
-   * @param db
-   *   The database connection object provided by connect().
-   *
-   * @see connect().
-   */
   var disconnect = function(db) {
     db.disconnect();
   }
 
-  /**
-   * Build a query object for the user.
-   *
-   * @param db
-   *   The database connection object provided by connect().
-   * @return
-   *   A query object the user can use to build their query.
-   *
-   * @see connect().
-   */
   var query_object = function(db) {
     return db.query();
   }
 
   /**
-   * Execute a query, and return the results.
-   *
-   * @param db
-   *   The database connection object provided by connect().
-   * @param query
-   *   The query object provided to the user.
-   * @param custom
-   *   Any custom query data returned from the user query function.
-   * @param callback
-   *   The function to call to return the query results, it should be passed
-   *   the following arguments:
-   *     err: Any error message.
-   *     result: An object of result data. In the case of node-db drivers,
-   *             this has the following keys:
-   *               rows: An array of result objects.
-   *               columns: An object describing the table columns of the query.
-   *
-   * @see connect().
+   * Returned result is an object with the following keys:
+   *   rows: An array of result objects.
+   *   columns: An object describing the table columns of the query.
    */
   var execute_query = function(db, query, custom, callback) {
     var execute_callback = function(err, rows, columns) {
@@ -113,37 +67,12 @@ module.exports = function(driver, debug_log, debug) {
     }
   }
 
-  /**
-   * The node-db drivers use the default transactional query functions, the
-   * commented out code here represents the functions that need to be
-   * implemented to customize these values.
-   *
-   * A driver can also return false for all these functions to disable
-   * using transactions.
-   *
-   * var transaction_begin = function() {
-   *   return "BEGIN";
-   * }
-   *
-   * var transaction_commit = function() {
-   *   return "COMMIT";
-   * }
-   *
-   * var transaction_rollback = function() {
-   *   return "ROLLBACK";
-   * }
-   */
-
   return {
     defaults: defaults,
     connect: connect,
     disconnect: disconnect,
     query_object: query_object,
     execute_query: execute_query,
-    // To customize the transactional commands, these keys would be included.
-    // transaction_begin: transaction_begin,
-    // transaction_commit: transaction_commit,
-    // transaction_rollback: transaction_rollback,
   }
 }
 
