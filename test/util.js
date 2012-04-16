@@ -1,4 +1,5 @@
 var db_pool = require('../../db-query-assistant');
+//db_pool.debug(true);
 var config = require('./config.dummy');
 
 var get_default_driver = function() {
