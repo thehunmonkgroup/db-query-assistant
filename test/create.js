@@ -14,36 +14,36 @@ var get_driver = function() {
 
 describe('#create()', function() {
   describe('with no database and pool arguments', function() {
-    it('should return pool with a pool object', function() {
+    it('should return an object with a pool object', function() {
       get_default_driver().pool.should.be.a('object');
     });
-    it('should return pool with a driver object', function() {
+    it('should return an object with a driver object', function() {
       get_default_driver().driver.should.be.a('object');
     });
-    it('should return pool with a query function', function() {
+    it('should return an object with a query function', function() {
       get_default_driver().query.should.be.a('function');
     });
-    it('should return pool with a querySeries function', function() {
+    it('should return an object with a querySeries function', function() {
       get_default_driver().querySeries.should.be.a('function');
     });
-    it('should return pool with a queryTransaction function', function() {
+    it('should return an object with a queryTransaction function', function() {
       get_default_driver().queryTransaction.should.be.a('function');
     });
   });
   describe('with database and pool arguments', function() {
-    it('should return pool with a pool object', function() {
+    it('should return an object with a pool object', function() {
       get_driver().pool.should.be.a('object');
     });
-    it('should return pool with a driver object', function() {
+    it('should return an object with a driver object', function() {
       get_driver().driver.should.be.a('object');
     });
-    it('should return pool with a query function', function() {
+    it('should return an object with a query function', function() {
       get_driver().query.should.be.a('function');
     });
-    it('should return pool with a querySeries function', function() {
+    it('should return an object with a querySeries function', function() {
       get_driver().querySeries.should.be.a('function');
     });
-    it('should return pool with a queryTransaction function', function() {
+    it('should return an object with a queryTransaction function', function() {
       get_driver().queryTransaction.should.be.a('function');
     });
   });
