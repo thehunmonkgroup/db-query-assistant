@@ -84,7 +84,7 @@ describe('pool#query()', function() {
       db.query(query, cb);
     });
   });
-  describe('with two successful queries', function() {
+  describe('with two queries (both succeed)', function() {
     it('should not return an error object', function(done) {
       var query1 = util.query_string;
       var query2 = util.query_object;
@@ -110,6 +110,36 @@ describe('pool#query()', function() {
       var query2_data = query2();
       var cb = function(err, data1, data2) {
         data2.query.should.equal(query2_data);
+        done();
+      }
+      db.query(query1, query2, cb);
+    });
+  });
+  describe('with two queries (first fails)', function() {
+    it('should return an error object', function(done) {
+      var query1 = util.query_error;
+      var query2 = util.query_string;
+      var query1_data = query1();
+      var cb = function(err, data1, data2) {
+        err.should.equal(query1_data);
+        done();
+      }
+      db.query(query1, query2, cb);
+    });
+    it('should not return a data1 object', function(done) {
+      var query1 = util.query_error;
+      var query2 = util.query_string;
+      var cb = function(err, data1, data2) {
+        should.not.exist(data1);
+        done();
+      }
+      db.query(query1, query2, cb);
+    });
+    it('should not return a data2 object', function(done) {
+      var query1 = util.query_error;
+      var query2 = util.query_string;
+      var cb = function(err, data1, data2) {
+        should.not.exist(data2);
         done();
       }
       db.query(query1, query2, cb);
