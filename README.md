@@ -87,8 +87,13 @@ No npm package yet, when the API is fully hardened it will be packaged. For now,
    * To skip executing a query, return false from the query function, the data
    * result for the skipped query in the callback will also be set to false.
    *
-   * Note that the exact format to return is driver-specific. This example
-   * shows the db-mysql/db-drizzle format.
+   * The exact format returned is driver-specific. This example shows the
+   * db-mysql/db-drizzle format.
+   *
+   * Note that due to the async handling of multiple queries, the query
+   * execution of all queries in the case of a query failure can not be
+   * guaranteed consistent. This method is best used for performing multiple
+   * simultaneous SELECTs.
    */
   var query_string = function() {
     return "SELECT * FROM test_table WHERE id = 1 LIMIT 1";
