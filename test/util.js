@@ -21,11 +21,15 @@ var query_array = function() {
 }
 
 var query_object = function(query) {
-  return query.sql("object");
+  query.sql("object");
 }
 
 var query_false = function(query) {
   return false;
+}
+
+var query_error = function(query) {
+  return "ERROR";
 }
 
 module.exports = {
@@ -35,5 +39,6 @@ module.exports = {
   query_array: query_array,
   query_object: query_object,
   query_false: query_false,
+  query_error: query_error,
 }
 
