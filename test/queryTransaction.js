@@ -165,6 +165,18 @@ describe('Database', function() {
         }
         db.queryTransaction(query1, query2, cb);
       });
+      it("should have a query stack of ['BEGIN', query, query, 'COMMIT']", function(done) {
+        var query1 = util.query_string;
+        var query2 = function(data1, query) {
+          return util.query_object(query);
+        }
+        var good_stack = ['BEGIN', 'string', 'object', 'COMMIT'];
+        var cb = function(err, data2) {
+          check_query_stack(good_stack);
+          done();
+        }
+        db.queryTransaction(query1, query2, cb);
+      });
     });
     describe('with two queries (first fails)', function() {
       it('should return an error object', function(done) {
@@ -197,6 +209,18 @@ describe('Database', function() {
         }
         var cb = function(err, data2) {
           should.not.exist(data2);
+          done();
+        }
+        db.queryTransaction(query1, query2, cb);
+      });
+      it("should have a query stack of ['BEGIN', 'ERROR', 'ROLLBACK']", function(done) {
+        var query1 = util.query_error;
+        var query2 = function(data1) {
+          return util.query_string();
+        }
+        var good_stack = ['BEGIN', 'ERROR', 'ROLLBACK'];
+        var cb = function(err, data2) {
+          check_query_stack(good_stack);
           done();
         }
         db.queryTransaction(query1, query2, cb);
@@ -234,6 +258,18 @@ describe('Database', function() {
         }
         var cb = function(err, data2) {
           should.not.exist(data2);
+          done();
+        }
+        db.queryTransaction(query1, query2, cb);
+      });
+      it("should have a query stack of ['BEGIN', query, 'ERROR', 'ROLLBACK']", function(done) {
+        var query1 = util.query_string;
+        var query2 = function(data1) {
+          return util.query_error();
+        }
+        var good_stack = ['BEGIN', 'string', 'ERROR', 'ROLLBACK'];
+        var cb = function(err, data2) {
+          check_query_stack(good_stack);
           done();
         }
         db.queryTransaction(query1, query2, cb);
