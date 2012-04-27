@@ -135,6 +135,28 @@ describe('Database', function() {
         }
         db.querySeries(query1, query2, cb);
       });
+      it('should not return a data object to query2', function(done) {
+        var query1 = util.query_error;
+        var query2 = function(data1) {
+          should.not.exist(data1);
+          return util.query_string();
+        }
+        var cb = function(err, data2) {
+          done();
+        }
+        db.querySeries(query1, query2, cb);
+      });
+      it('should not return a data object to the user callback', function(done) {
+        var query1 = util.query_error;
+        var query2 = function(data1) {
+          return util.query_string();
+        }
+        var cb = function(err, data2) {
+          should.not.exist(data2);
+          done();
+        }
+        db.querySeries(query1, query2, cb);
+      });
     });
     describe('with two queries (second fails)', function() {
       it('should return an error object', function(done) {
@@ -145,6 +167,29 @@ describe('Database', function() {
         var error_data = 'ERROR';
         var cb = function(err, data2) {
           err.should.equal(error_data);
+          done();
+        }
+        db.querySeries(query1, query2, cb);
+      });
+      it('should return a data object to query2', function(done) {
+        var query1 = util.query_string;
+        var query2 = function(data1) {
+          data1.query.should.equal(query1_data);
+          return util.query_error();
+        }
+        var query1_data = query1();
+        var cb = function(err, data2) {
+          done();
+        }
+        db.querySeries(query1, query2, cb);
+      });
+      it('should not return a data object to the user callback', function(done) {
+        var query1 = util.query_string;
+        var query2 = function(data1) {
+          return util.query_error();
+        }
+        var cb = function(err, data2) {
+          should.not.exist(data2);
           done();
         }
         db.querySeries(query1, query2, cb);

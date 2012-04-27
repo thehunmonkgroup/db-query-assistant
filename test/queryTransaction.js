@@ -1,3 +1,4 @@
+var _ = require('underscore');
 var util = require('./util');
 var should = require('should');
 
@@ -7,6 +8,10 @@ var should = require('should');
 describe('Database', function() {
   describe('#queryTransaction()', function() {
     var db = util.get_driver();
+    var check_query_stack = function(good_stack) {
+      var stack = db.driver.get_query_stack();
+      _.isEqual(good_stack, stack).should.be.true;
+    }
     beforeEach(function() {
       db.driver.clear_query_stack();
     });
@@ -24,6 +29,16 @@ describe('Database', function() {
         var query_data = query();
         var cb = function(err, data) {
           data.query.should.equal(query_data);
+          done();
+        }
+        db.queryTransaction(query, cb);
+      });
+      it("should have a query stack of ['BEGIN', query, 'COMMIT']", function(done) {
+        var query = util.query_string;
+        var query_data = query();
+        var good_stack = ['BEGIN', query_data, 'COMMIT'];
+        var cb = function(err, data) {
+          check_query_stack(good_stack);
           done();
         }
         db.queryTransaction(query, cb);
@@ -47,6 +62,16 @@ describe('Database', function() {
         }
         db.queryTransaction(query, cb);
       });
+      it("should have a query stack of ['BEGIN', query, 'COMMIT']", function(done) {
+        var query = util.query_object;
+        var query_data = "object";
+        var good_stack = ['BEGIN', query_data, 'COMMIT'];
+        var cb = function(err, data) {
+          check_query_stack(good_stack);
+          done();
+        }
+        db.queryTransaction(query, cb);
+      });
     });
     describe('with one failed query', function() {
       it('should return an error object', function(done) {
@@ -66,6 +91,16 @@ describe('Database', function() {
         }
         db.queryTransaction(query, cb);
       });
+      it("should have a query stack of ['BEGIN', 'ERROR', 'ROLLBACK']", function(done) {
+        var query = util.query_error;
+        var error_data = 'ERROR';
+        var good_stack = ['BEGIN', error_data, 'ROLLBACK'];
+        var cb = function(err, data) {
+          check_query_stack(good_stack);
+          done();
+        }
+        db.queryTransaction(query, cb);
+      });
     });
     describe('with one query returning false', function() {
       it('should not return an error object', function(done) {
@@ -80,6 +115,15 @@ describe('Database', function() {
         var query = util.query_false;
         var cb = function(err, data) {
           data.should.be.false;
+          done();
+        }
+        db.queryTransaction(query, cb);
+      });
+      it("should have a query stack of ['BEGIN', 'COMMIT']", function(done) {
+        var query = util.query_false;
+        var good_stack = ['BEGIN', 'COMMIT'];
+        var cb = function(err, data) {
+          check_query_stack(good_stack);
           done();
         }
         db.queryTransaction(query, cb);
@@ -121,6 +165,18 @@ describe('Database', function() {
         }
         db.queryTransaction(query1, query2, cb);
       });
+      it("should have a query stack of ['BEGIN', query, query, 'COMMIT']", function(done) {
+        var query1 = util.query_string;
+        var query2 = function(data1, query) {
+          return util.query_object(query);
+        }
+        var good_stack = ['BEGIN', 'string', 'object', 'COMMIT'];
+        var cb = function(err, data2) {
+          check_query_stack(good_stack);
+          done();
+        }
+        db.queryTransaction(query1, query2, cb);
+      });
     });
     describe('with two queries (first fails)', function() {
       it('should return an error object', function(done) {
@@ -135,6 +191,40 @@ describe('Database', function() {
         }
         db.queryTransaction(query1, query2, cb);
       });
+      it('should not return a data object to query2', function(done) {
+        var query1 = util.query_error;
+        var query2 = function(data1) {
+          should.not.exist(data1);
+          return util.query_string();
+        }
+        var cb = function(err, data2) {
+          done();
+        }
+        db.queryTransaction(query1, query2, cb);
+      });
+      it('should not return a data object to the user callback', function(done) {
+        var query1 = util.query_error;
+        var query2 = function(data1) {
+          return util.query_string();
+        }
+        var cb = function(err, data2) {
+          should.not.exist(data2);
+          done();
+        }
+        db.queryTransaction(query1, query2, cb);
+      });
+      it("should have a query stack of ['BEGIN', 'ERROR', 'ROLLBACK']", function(done) {
+        var query1 = util.query_error;
+        var query2 = function(data1) {
+          return util.query_string();
+        }
+        var good_stack = ['BEGIN', 'ERROR', 'ROLLBACK'];
+        var cb = function(err, data2) {
+          check_query_stack(good_stack);
+          done();
+        }
+        db.queryTransaction(query1, query2, cb);
+      });
     });
     describe('with two queries (second fails)', function() {
       it('should return an error object', function(done) {
@@ -145,6 +235,41 @@ describe('Database', function() {
         var error_data = 'ERROR';
         var cb = function(err, data2) {
           err.should.equal(error_data);
+          done();
+        }
+        db.queryTransaction(query1, query2, cb);
+      });
+      it('should return a data object to query2', function(done) {
+        var query1 = util.query_string;
+        var query2 = function(data1) {
+          data1.query.should.equal(query1_data);
+          return util.query_error();
+        }
+        var query1_data = query1();
+        var cb = function(err, data2) {
+          done();
+        }
+        db.queryTransaction(query1, query2, cb);
+      });
+      it('should not return a data object to the user callback', function(done) {
+        var query1 = util.query_string;
+        var query2 = function(data1) {
+          return util.query_error();
+        }
+        var cb = function(err, data2) {
+          should.not.exist(data2);
+          done();
+        }
+        db.queryTransaction(query1, query2, cb);
+      });
+      it("should have a query stack of ['BEGIN', query, 'ERROR', 'ROLLBACK']", function(done) {
+        var query1 = util.query_string;
+        var query2 = function(data1) {
+          return util.query_error();
+        }
+        var good_stack = ['BEGIN', 'string', 'ERROR', 'ROLLBACK'];
+        var cb = function(err, data2) {
+          check_query_stack(good_stack);
           done();
         }
         db.queryTransaction(query1, query2, cb);
