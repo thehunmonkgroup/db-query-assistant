@@ -17,14 +17,15 @@ Drivers exist for the following modules:
 Writing new drivers is fairly straightforward, have a look at one of the existing drivers, and feel free to submit a pull request to add one!
 
 ## Installation
+```
+  npm install db-query-assistant
+```
 
 ### Dependencies
  * [underscore](http://documentcloud.github.com/underscore)
  * [async](https://github.com/caolan/async)
  * [generic-pool](https://github.com/coopernurse/node-pool)
  * One or more of the supported database connection modules listed above.
-
-No npm package yet, when the API is fully hardened it will be packaged. For now, clone it!
 
 ## Usage
 ```javascript
