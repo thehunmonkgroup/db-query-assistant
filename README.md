@@ -35,7 +35,7 @@ No npm package yet, when the API is fully hardened it will be packaged. For now,
   // the driver documentation. This example is for the db-mysql/db-drizzle
   // driver.
   var db_config = {
-    host: 'localhost',
+    hostname: 'localhost',
     user: 'root',
     password: 'root',
     database: 'test',
