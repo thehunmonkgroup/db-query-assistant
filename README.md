@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/thehunmonkgroup/db-query-assistant.png)](http://travis-ci.org/thehunmonkgroup/db-query-assistant)
 # db-query-assistant
 
 ## Summary
